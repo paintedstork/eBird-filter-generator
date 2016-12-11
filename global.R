@@ -1,0 +1,8 @@
+setwd('data')
+g_records   <- readRDS('ebd_records.rds')
+g_species   <- readRDS('ebd_species.rds')
+g_states    <- readRDS('ebd_states.rds')
+g_districts <- readRDS('ebd_districts.rds')
+g_filters   <- readRDS('ebd_filters.rds')
+g_lists     <- readRDS('ebd_lists.rds')
+setwd('..')
