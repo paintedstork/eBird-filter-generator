@@ -12,10 +12,26 @@ output$minutes <- renderText( {
          sep='')
 })
 
-output$filter <- renderDataTable ({ generateFilter (state = 'None',
+output$downloadData <- downloadHandler(
+  filename = function() { paste('Filter_',
+                                Sys.Date(),'_',
+                                '.csv', sep='') },
+  content = function(file) {
+    currentfilter<-generateFilter (state = input$state,
+                                   filterRegion =  input$filterRegion,
+                                   fortnightly = (input$fortnight=='Fortnight'), 
+                                   duration = getMinutes (input$duration, input$state, input$filterRegion),
+                                   filterPercentile = input$countPercentile,
+                                   makeXAs1 = input$Xas1,
+                                   dataView = input$alldata)    
+    write.csv(currentfilter, file)
+  }  
+)
+
+output$filter <- renderDataTable ({currentfilter<-generateFilter (state = input$state,
                                                     filterRegion =  input$filterRegion,
                                                     fortnightly = (input$fortnight=='Fortnight'), 
-                                                    duration = getMinutes (input$duration, 'None', input$filterRegion),
+                                                    duration = getMinutes (input$duration, input$state, input$filterRegion),
                                                     filterPercentile = input$countPercentile,
                                                     makeXAs1 = input$Xas1,
                                                     dataView = input$alldata)
@@ -23,11 +39,10 @@ output$filter <- renderDataTable ({ generateFilter (state = 'None',
                     lengthMenu = list(c(20, 50, 100, 300, 500, -1), c('20', '50', '100', '300', '500', 'All')),
                     pageLength = 100))
 
-
+  
 }
 
 shinyUI <- fluidPage(
-#  theme = "bootstrap.css",
   titlePanel('Filter Generator'),
   fluidRow(
     column(12,
@@ -41,8 +56,8 @@ shinyUI <- fluidPage(
   sidebarPanel(
     width = 3,  
     
-    selectInput('filterRegion', 'Filter Region', choices = g_filters$FILTER, selected = 'India--Kerala--Alappuzha'),
-#    selectInput('state', 'State', choices = g_states$STATE_PROVINCE, selected = 'Kerala'),
+    selectInput('filterRegion', 'Filter Region', choices = c("None",g_filters$FILTER), selected = 'India--Kerala--Alappuzha'),
+    selectInput('state', 'State', choices = c("None",g_states$STATE_PROVINCE), selected = 'None'),
                             
     selectInput('fortnight', 'Period', c('Month', 'Fortnight')),
 
@@ -73,15 +88,14 @@ shinyUI <- fluidPage(
         tabPanel("About", 
                  br(), h1("About Filter Generator"), 
                  br(), p("eBird Central implemented filters that support custom boundaries."), 
-#                br(), img( src = "edge_image.png", height = 350, width = 700), 
                  br(), p("This program is useful in creating/customising filters using existing eBird data which typically filter editors use past experience."), 
                  br(), p("For more information on Filters, check out these articles:"), 
                  br(), a("Understanding the eBird review and data quality process", href = "http://help.ebird.org/customer/portal/articles/1055676-understanding-the-ebird-review-and-data-quality-process/"), 
                  br(), br(), a("Understanding eBird Filters", href = "https://teamebirdmichigan.wordpress.com/2014/04/04/understanding-the-ebird-filters//"),
                  br(), br(), a("eBird Data Quality and Review Process", href = "http://www.birdcount.in/ebird-data-quality-review/") 
         )
-      )    
-#    plotOutput('plot')
+      ),
+    downloadButton('downloadData', 'Download')
   )
 )
 
