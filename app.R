@@ -1,4 +1,5 @@
 library(shiny)
+library(DT)
 
 source("helper.R")
 source("global.R")
@@ -23,12 +24,12 @@ output$downloadData <- downloadHandler(
                                    duration = getMinutes (input$duration, input$state, input$filterRegion),
                                    filterPercentile = input$countPercentile,
                                    makeXAs1 = input$Xas1,
-                                   dataView = input$alldata)    
+                                   dataView = input$alldata)  
     write.csv(currentfilter, file)
   }  
 )
 
-output$filter <- renderDataTable ({currentfilter<-generateFilter (state = input$state,
+output$filter <- renderDT ({currentfilter<-generateFilter (state = input$state,
                                                     filterRegion =  input$filterRegion,
                                                     fortnightly = (input$fortnight=='Fortnight'), 
                                                     duration = getMinutes (input$duration, input$state, input$filterRegion),
@@ -49,15 +50,15 @@ shinyUI <- fluidPage(
            p("Uses eBird data to generate a fortnightly/monthly eBird filter automatically"),
            p("Created and maintained by Praveen J, Bird Count India",
              a("(@Praveen J)", href = "Email:paintedstork@gmail.com")),
-           p("Data last updated",Sys.time()))
+           p("Last Date of Update. Data: 10 May 2019. Code: 10 October 2019. Filter Configuration: 10 October 2019"))
   ), 
   
   
   sidebarPanel(
     width = 3,  
     
-    selectInput('filterRegion', 'Filter Region', choices = c("None",g_filters$FILTER), selected = 'India--Kerala--Alappuzha'),
-    selectInput('state', 'State', choices = c("None",g_states$STATE_PROVINCE), selected = 'None'),
+    selectInput('filterRegion', 'Filter Region', choices = c("None",g_all_filters), selected = 'India--West Bengal--North'),
+    selectInput('state', 'State', choices = c("None",g_states$STATE), selected = 'West Bengal'),
                             
     selectInput('fortnight', 'Period', c('Month', 'Fortnight')),
 
