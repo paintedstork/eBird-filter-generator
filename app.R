@@ -1,8 +1,8 @@
 library(shiny)
 library(DT)
 
-source("helper.R")
-source("global.R")
+source("helper.r")
+source("global.r")
 
 shinyServer <- function(input, output) {
   
@@ -50,7 +50,7 @@ shinyUI <- fluidPage(
            p("Uses eBird data to generate a fortnightly/monthly eBird filter automatically"),
            p("Created and maintained by Praveen J, Bird Count India",
              a("(@Praveen J)", href = "Email:paintedstork@gmail.com")),
-           p("Last Date of Update. Data: 10 May 2019. Code: 10 October 2019. Filter Configuration: 10 October 2019"))
+           p("Last Date of Update. Data: 30 May 2021. Code: 30 May 2021. Filter Configuration: Dynamic - Managed by Bird Count India"))
   ), 
   
   
@@ -58,7 +58,7 @@ shinyUI <- fluidPage(
     width = 3,  
     
     selectInput('filterRegion', 'Filter Region', choices = c("None",g_all_filters), selected = 'India--West Bengal--North'),
-    selectInput('state', 'State', choices = c("None",g_states$STATE), selected = 'West Bengal'),
+    selectInput('state', 'State', choices = c("None",g_states$STATE), selected = firstState),
                             
     selectInput('fortnight', 'Period', c('Month', 'Fortnight')),
 
@@ -91,7 +91,7 @@ shinyUI <- fluidPage(
                  br(), p("eBird Central implemented filters that support custom boundaries."), 
                  br(), p("This program is useful in creating/customising filters using existing eBird data which typically filter editors use past experience."), 
                  br(), p("For more information on Filters, check out these articles:"), 
-                 br(), a("Understanding the eBird review and data quality process", href = "http://help.ebird.org/customer/portal/articles/1055676-understanding-the-ebird-review-and-data-quality-process/"), 
+                 br(), a("Understanding the eBird review and data quality process", href = "https://support.ebird.org/en/support/solutions/articles/48000795278-the-ebird-data-quality-and-review-process"), 
                  br(), br(), a("Understanding eBird Filters", href = "https://teamebirdmichigan.wordpress.com/2014/04/04/understanding-the-ebird-filters//"),
                  br(), br(), a("eBird Data Quality and Review Process", href = "http://www.birdcount.in/ebird-data-quality-review/") 
         )
