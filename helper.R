@@ -89,31 +89,6 @@ getMinutes <- function(q, state, filterRegion) {
 }
   
 
-#' Returns the number of days in a vector of month. Feb returns 29 by default
-#' 
-#' @param m Index of the month 1..12.
-#' @return Number of days in a particular month.
-#' @examples
-#' daysInMonth(5)
-
-daysInMonth <- Vectorize (function(m=30){
-  
-  # Return the number of days in the month
-  return(switch(m,
-                '01' = 31,
-                '02' = 29,
-                '03' = 31,
-                '04' = 30,
-                '05' = 31,
-                '06' = 30,
-                '07' = 31,
-                '08' = 31,
-                '09' = 30,
-                '10' = 31,
-                '11' = 30,
-                '12' = 31))
-}
-)
 
 #  
 # 
@@ -164,7 +139,17 @@ generateFilter <- function(state='None', filterRegion, filterPercentile=90, dura
   # Filter only relevant fields
   f_ebd_lists <- subset(f_ebd_lists, select = c("UNIQUE_SAMPLING_ID","Fortnight", "ALL.SPECIES.REPORTED"))
   
-  f_ebd_records <- g_records
+# State caching optimization with lazy load of state records.  
+  if( (g_current_state == state) || (state == "None"))
+  {
+    f_ebd_records <- g_records
+  }
+  else
+  {
+    # Load state records
+    f_ebd_records <- getRecords(state)
+  }
+  g_current_state = state
 
 #  f_ebd_records <- join(f_ebd_records, f_ebd_lists, type="inner", by = 'UNIQUE_SAMPLING_ID')
   
